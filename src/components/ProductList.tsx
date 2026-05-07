@@ -13,66 +13,83 @@ type Producto = {
 };
 
 type Props = {
-  reload: boolean;
+  refresh: boolean;
+  onEdit: (product: Producto) => void;
 };
 
 export default function ProductList({
-  reload,
+  refresh,
+  onEdit,
 }: Props) {
-  const [productos, setProductos] =
-    useState<Producto[]>([]);
+  const [productos, setProductos] = useState<Producto[]>([]);
 
-  // LISTAR PRODUCTOS
+  // LISTAR
   const loadProductos = async () => {
-    const res = await getProductos();
-
-    setProductos(res.data);
+    try {
+      const res = await getProductos();
+      setProductos(res.data);
+    } catch (error) {
+      console.error(error);
+      alert("Error al cargar productos");
+    }
   };
 
-  // ELIMINAR PRODUCTO
-  const handleDelete = async (
-    id: number
-  ) => {
-    await deleteProducto(id);
-
-    loadProductos();
-  };
-
-  // CARGAR PRODUCTOS
   useEffect(() => {
     loadProductos();
-  }, [reload]);
+  }, [refresh]);
+
+  // ELIMINAR
+  const handleDelete = async (id: number) => {
+    const confirm = window.confirm("¿Eliminar producto?");
+    if (!confirm) return;
+
+    try {
+      await deleteProducto(id);
+      loadProductos();
+    } catch (error) {
+      console.error(error);
+      alert("Error al eliminar");
+    }
+  };
 
   return (
     <div>
-      <h2>Lista de Productos</h2>
+      <h2 className="text-2xl font-bold mb-4">Lista de Productos</h2>
 
       {productos.length === 0 ? (
         <p>No hay productos registrados</p>
       ) : (
-        <ul>
+        <div className="space-y-4">
           {productos.map((p) => (
-            <li key={p.id}>
-              <strong>{p.name}</strong>
-              {" - "}
-              ${p.price}
-              {" - "}
-              {p.description}
-              {" - "}
-              {p.isActive
-                ? "Activo"
-                : "Inactivo"}
+            <div
+              key={p.id}
+              className="border p-4 rounded shadow-sm bg-gray-50"
+            >
+              <h3 className="font-bold text-lg">{p.name}</h3>
+              <p>💲 {p.price}</p>
+              <p>{p.description}</p>
+              <p>
+                {p.isActive ? "🟢 Activo" : "🔴 Inactivo"}
+              </p>
 
-              <button
-                onClick={() =>
-                  handleDelete(p.id)
-                }
-              >
-                Eliminar
-              </button>
-            </li>
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={() => onEdit(p)}
+                  className="bg-yellow-500 text-white px-3 py-1 rounded"
+                >
+                  Editar
+                </button>
+
+                <button
+                  onClick={() => handleDelete(p.id)}
+                  className="bg-red-600 text-white px-3 py-1 rounded"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
