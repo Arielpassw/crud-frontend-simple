@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
-
 import {
   createProducto,
-  getProductos,
-  deleteProducto,
   updateProducto,
 } from "../api/products";
 
@@ -16,310 +13,124 @@ type Producto = {
 };
 
 type Props = {
-  onCreated?: () => void;
+  onSuccess: () => void;
+  productToEdit?: Producto | null;
+  clearEdit: () => void;
 };
 
 export default function ProductForm({
-  onCreated,
+  onSuccess,
+  productToEdit,
+  clearEdit,
 }: Props) {
-
-  // FORM
+  // FORM STATE
   const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [description, setDescription] =
-    useState("");
-  const [isActive, setIsActive] =
-    useState(true);
+  const [price, setPrice] = useState<string>("");
+  const [description, setDescription] = useState("");
+  const [isActive, setIsActive] = useState(true);
 
-  // LISTA
-  const [productos, setProductos] =
-    useState<Producto[]>([]);
-
-  // EDIT
-  const [editingId, setEditingId] =
-    useState<number | null>(null);
-
-  // LISTAR PRODUCTOS
-  const loadProductos = async () => {
-    try {
-      const res = await getProductos();
-
-      setProductos(res.data);
-
-    } catch (error) {
-      console.error(error);
-
-      alert(
-        "Error al cargar productos"
-      );
+  // Cargar datos cuando editas
+  useEffect(() => {
+    if (productToEdit) {
+      setName(productToEdit.name);
+      setPrice(productToEdit.price.toString());
+      setDescription(productToEdit.description);
+      setIsActive(productToEdit.isActive);
     }
+  }, [productToEdit]);
+
+  // LIMPIAR FORM
+  const resetForm = () => {
+    setName("");
+    setPrice("");
+    setDescription("");
+    setIsActive(true);
+    clearEdit?.();
   };
 
-  useEffect(() => {
-    loadProductos();
-  }, []);
-
-  // CREAR / ACTUALIZAR
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-
+  // SUBMIT
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-
-      const productoData = {
+      const data = {
         name,
         price: Number(price),
         description,
         isActive,
       };
 
-      // UPDATE
-      if (editingId) {
-
-        await updateProducto(
-          editingId,
-          productoData
-        );
-
-        alert(
-          "Producto actualizado correctamente"
-        );
-
-        setEditingId(null);
-
+      if (productToEdit) {
+        await updateProducto(productToEdit.id, data);
+        alert("Producto actualizado");
       } else {
-
-        // CREATE
-        await createProducto(
-          productoData
-        );
-
-        alert(
-          "Producto guardado correctamente"
-        );
+        await createProducto(data);
+        alert("Producto creado");
       }
 
-      // LIMPIAR FORM
-      setName("");
-      setPrice("");
-      setDescription("");
-      setIsActive(true);
-
-      // RECARGAR LISTA
-      loadProductos();
-
-      // CALLBACK OPCIONAL
-      onCreated?.();
-
+      resetForm();
+      onSuccess();
     } catch (error) {
-
       console.error(error);
-
-      alert(
-        "Error al guardar el producto"
-      );
+      alert("Error al guardar producto");
     }
   };
 
-  // ELIMINAR
-  const handleDelete = async (
-  id: number
-) => {
-
-  const confirmar = window.confirm(
-    "¿Está seguro de eliminar este producto?"
-  );
-
-  if (!confirmar) return;
-
-  try {
-
-    await deleteProducto(id);
-
-    alert(
-      "Producto eliminado correctamente"
-    );
-
-    loadProductos();
-
-  } catch (error) {
-
-    console.error(error);
-
-    alert(
-      "Error al eliminar producto"
-    );
-  }
-};
-
-  // EDITAR
-  const handleEdit = (
-    producto: Producto
-  ) => {
-
-    setEditingId(producto.id);
-
-    setName(producto.name);
-
-    setPrice(
-      producto.price.toString()
-    );
-
-    setDescription(
-      producto.description
-    );
-
-    setIsActive(
-      producto.isActive
-    );
-  };
-
   return (
-    <div>
-
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-4"
-      >
-
-        <h2 className="text-2xl font-semibold">
-
-          {editingId
-            ? "Editar Producto"
-            : "Crear Producto"}
-
-        </h2>
-
-        <input
-          type="text"
-          placeholder="Nombre"
-          value={name}
-          onChange={(e) =>
-            setName(e.target.value)
-          }
-          className="w-full border p-3 rounded-lg"
-        />
-
-        <input
-          type="text"
-          placeholder="Descripción"
-          value={description}
-          onChange={(e) =>
-            setDescription(
-              e.target.value
-            )
-          }
-          className="w-full border p-3 rounded-lg"
-        />
-
-        <input
-          type="number"
-          placeholder="Precio"
-          value={price}
-          onChange={(e) =>
-            setPrice(e.target.value)
-          }
-          className="w-full border p-3 rounded-lg"
-        />
-
-        <label className="flex items-center gap-2">
-
-          <input
-            type="checkbox"
-            checked={isActive}
-            onChange={(e) =>
-              setIsActive(
-                e.target.checked
-              )
-            }
-          />
-
-          Activo
-
-        </label>
-
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
-        >
-
-          {editingId
-            ? "Actualizar"
-            : "Guardar"}
-
-        </button>
-
-      </form>
-
-      <hr className="my-8" />
-
-      <h2 className="text-2xl font-semibold mb-4">
-        Lista de Productos
+    <form onSubmit={handleSubmit} className="space-y-4 mb-8">
+      <h2 className="text-2xl font-bold">
+        {productToEdit ? "Editar Producto" : "Crear Producto"}
       </h2>
 
-      <div className="space-y-4">
+      <input
+        className="w-full border p-2 rounded"
+        placeholder="Nombre"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
 
-        {productos.map((p) => (
+      <input
+        className="w-full border p-2 rounded"
+        placeholder="Descripción"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
 
-          <div
-            key={p.id}
-            className="border rounded-lg p-4 shadow-sm bg-gray-50"
+      <input
+        className="w-full border p-2 rounded"
+        type="number"
+        placeholder="Precio"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+      />
+
+      <label className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={isActive}
+          onChange={(e) => setIsActive(e.target.checked)}
+        />
+        Activo
+      </label>
+
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          {productToEdit ? "Actualizar" : "Guardar"}
+        </button>
+
+        {productToEdit && (
+          <button
+            type="button"
+            onClick={resetForm}
+            className="bg-gray-400 text-white px-4 py-2 rounded"
           >
-
-            <h3 className="text-xl font-bold">
-              {p.name}
-            </h3>
-
-            <p>
-              <strong>Precio:</strong>
-              {" "}$
-              {p.price}
-            </p>
-
-            <p>
-              <strong>Descripción:</strong>
-              {" "}
-              {p.description}
-            </p>
-
-            <p>
-              <strong>Estado:</strong>
-              {" "}
-              {p.isActive
-                ? "Activo"
-                : "Inactivo"}
-            </p>
-
-            <div className="flex gap-3 mt-4">
-
-              <button
-                onClick={() =>
-                  handleEdit(p)
-                }
-                className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
-              >
-                Editar
-              </button>
-
-              <button
-                onClick={() =>
-                  handleDelete(p.id)
-                }
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-              >
-                Eliminar
-              </button>
-
-            </div>
-
-          </div>
-
-        ))}
-
+            Cancelar
+          </button>
+        )}
       </div>
-
-    </div>
+    </form>
   );
 }
