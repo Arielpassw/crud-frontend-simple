@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import ProductsPage from "./pages/ProductsPage";
 import StorePage from "./pages/StorePage";
+import InventoryPage from "./pages/InventoryPage";
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
           <Routes>
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/stores" element={<StorePage />} />
-            <Route path="/inventory" element={<div>Inventory aquí</div>} />
+            <Route path="/inventory" element={<InventoryPage />} />
           </Routes>
 
         </div>
