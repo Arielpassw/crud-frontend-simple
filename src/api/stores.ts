@@ -1,32 +1,20 @@
 import axios from "axios";
 
-const API = axios.create({
-  baseURL: "http://localhost:3000",
-});
+const API_URL = "http://localhost:3000/store";
 
-// GET ALL
 export const getStores = () =>
-  API.get("/store");
+  axios.get(API_URL);
 
-// CREATE
-export const createStore = (data: {
-  name_store: string;
-  address: string;
-}) =>
-  API.post("/store", data);
+export const createStore = (data: any) =>
+  axios.post(API_URL, data);
 
-// UPDATE
 export const updateStore = (
   id: number,
-  data: {
-    name_store: string;
-    address: string;
-  }
+  data: any
 ) =>
-  API.put(`/store/${id}`, data);
+  axios.patch(`${API_URL}/${id}`, data);
 
-// DELETE
 export const deleteStore = (
   id: number
 ) =>
-  API.delete(`/store/${id}`);
+  axios.delete(`${API_URL}/${id}`);

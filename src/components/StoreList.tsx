@@ -12,12 +12,12 @@ type Store = {
 };
 
 type Props = {
-  reload: boolean;
+  refresh: boolean;
   onEdit: (store: Store) => void;
 };
 
 export default function StoreList({
-  reload,
+  refresh,
   onEdit,
 }: Props) {
 
@@ -43,15 +43,18 @@ export default function StoreList({
   };
 
   useEffect(() => {
-    loadStores();
-  }, [reload]);
 
+    loadStores();
+
+  }, [refresh]);
+
+  // ELIMINAR
   const handleDelete = async (
     id: number
   ) => {
 
     const confirmar = window.confirm(
-      "¿Desea eliminar esta tienda?"
+      "¿Eliminar tienda?"
     );
 
     if (!confirmar) return;
@@ -61,7 +64,7 @@ export default function StoreList({
       await deleteStore(id);
 
       alert(
-        "Tienda eliminada correctamente"
+        "Tienda eliminada"
       );
 
       loadStores();
@@ -79,54 +82,66 @@ export default function StoreList({
   return (
     <div>
 
+      <hr className="my-8" />
+
       <h2 className="text-2xl font-semibold mb-4">
         Lista de Tiendas
       </h2>
 
       <div className="space-y-4">
 
-        {stores.map((s) => (
+        {stores.length === 0 ? (
 
-          <div
-            key={s.id}
-            className="border rounded-lg p-4 shadow-sm bg-gray-50"
-          >
+          <p className="text-gray-500">
+            No hay tiendas registradas
+          </p>
 
-            <h3 className="text-xl font-bold">
-              {s.name_store}
-            </h3>
+        ) : (
 
-            <p>
-              <strong>Dirección:</strong>
-              {" "}
-              {s.address}
-            </p>
+          stores.map((s) => (
 
-            <div className="flex gap-3 mt-4">
+            <div
+              key={s.id}
+              className="border rounded-lg p-4 shadow-sm bg-gray-50"
+            >
 
-              <button
-                onClick={() =>
-                  onEdit(s)
-                }
-                className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
-              >
-                Editar
-              </button>
+              <h3 className="text-xl font-bold">
+                {s.name_store}
+              </h3>
 
-              <button
-                onClick={() =>
-                  handleDelete(s.id)
-                }
-                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
-              >
-                Eliminar
-              </button>
+              <p>
+                <strong>Dirección:</strong>
+                {" "}
+                {s.address}
+              </p>
+
+              <div className="flex gap-3 mt-4">
+
+                <button
+                  onClick={() =>
+                    onEdit(s)
+                  }
+                  className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600"
+                >
+                  Editar
+                </button>
+
+                <button
+                  onClick={() =>
+                    handleDelete(s.id)
+                  }
+                  className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                >
+                  Eliminar
+                </button>
+
+              </div>
 
             </div>
 
-          </div>
+          ))
 
-        ))}
+        )}
 
       </div>
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   createStore,
@@ -12,64 +12,84 @@ type Store = {
 };
 
 type Props = {
-  editingStore: Store | null;
-  onSaved: () => void;
+  onSuccess: () => void;
+  storeToEdit?: Store | null;
+  clearEdit: () => void;
 };
 
 export default function StoreForm({
-  editingStore,
-  onSaved,
+  onSuccess,
+  storeToEdit,
+  clearEdit,
 }: Props) {
 
   const [nameStore, setNameStore] =
-    useState(
-      editingStore?.name_store || ""
-    );
+    useState("");
 
   const [address, setAddress] =
-    useState(
-      editingStore?.address || ""
-    );
+    useState("");
 
+  useEffect(() => {
+
+    if (storeToEdit) {
+
+      setNameStore(
+        storeToEdit.name_store
+      );
+
+      setAddress(
+        storeToEdit.address
+      );
+    }
+
+  }, [storeToEdit]);
+
+  // LIMPIAR FORM
+  const resetForm = () => {
+
+    setNameStore("");
+    setAddress("");
+
+    clearEdit?.();
+  };
+
+  // SUBMIT
   const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
+    e: React.FormEvent
   ) => {
 
     e.preventDefault();
 
     try {
 
-      const storeData = {
+      const data = {
         name_store: nameStore,
         address,
       };
 
-      // UPDATE
-      if (editingStore) {
+      if (storeToEdit) {
 
         await updateStore(
-          editingStore.id,
-          storeData
+          storeToEdit.id,
+          data
         );
 
         alert(
-          "Tienda actualizada correctamente"
+          "Tienda actualizada"
         );
 
       } else {
 
-        // CREATE
-        await createStore(storeData);
+        await createStore(data);
 
         alert(
-          "Tienda creada correctamente"
+          "Tienda creada"
         );
       }
 
-      setNameStore("");
-      setAddress("");
+      resetForm();
 
-      onSaved();
+      onSuccess();
 
     } catch (error) {
 
@@ -89,7 +109,7 @@ export default function StoreForm({
 
       <h2 className="text-2xl font-semibold">
 
-        {editingStore
+        {storeToEdit
           ? "Editar Tienda"
           : "Crear Tienda"}
 
@@ -97,12 +117,10 @@ export default function StoreForm({
 
       <input
         type="text"
-        placeholder="Nombre tienda"
+        placeholder="Nombre de tienda"
         value={nameStore}
         onChange={(e) =>
-          setNameStore(
-            e.target.value
-          )
+          setNameStore(e.target.value)
         }
         className="w-full border p-3 rounded-lg"
       />
@@ -112,23 +130,37 @@ export default function StoreForm({
         placeholder="Dirección"
         value={address}
         onChange={(e) =>
-          setAddress(
-            e.target.value
-          )
+          setAddress(e.target.value)
         }
         className="w-full border p-3 rounded-lg"
       />
 
-      <button
-        type="submit"
-        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
-      >
+      <div className="flex gap-2">
 
-        {editingStore
-          ? "Actualizar"
-          : "Guardar"}
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
+        >
 
-      </button>
+          {storeToEdit
+            ? "Actualizar"
+            : "Guardar"}
+
+        </button>
+
+        {storeToEdit && (
+
+          <button
+            type="button"
+            onClick={resetForm}
+            className="bg-gray-500 text-white px-6 py-3 rounded-lg"
+          >
+            Cancelar
+          </button>
+
+        )}
+
+      </div>
 
     </form>
   );

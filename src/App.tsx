@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import ProductsPage from "./pages/ProductsPage";
+import StorePage from "./pages/StorePage";
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
           {/* RUTAS */}
           <Routes>
             <Route path="/products" element={<ProductsPage />} />
-            <Route path="/stores" element={<div>Stores aquí</div>} />
+            <Route path="/stores" element={<StorePage />} />
             <Route path="/inventory" element={<div>Inventory aquí</div>} />
           </Routes>
 
