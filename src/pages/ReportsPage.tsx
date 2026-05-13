@@ -1,5 +1,4 @@
-import ReportsList
-from "../components/reports/ReportsList";
+import ReportsList from "../components/reports/ReportsList";
 
 export default function ReportsPage() {
 
