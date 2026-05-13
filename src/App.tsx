@@ -9,6 +9,7 @@ import {
 import ProductsPage from "./pages/ProductsPage";
 import StorePage from "./pages/StorePage";
 import InventoryPage from "./pages/InventoryPage";
+import ReportsPage from "./pages/ReportsPage";
 
 function App() {
 
@@ -90,9 +91,7 @@ function App() {
             <Route
               path="/reports"
               element={
-                <h2 className="text-2xl font-bold">
-                  Módulo de Reportes
-                </h2>
+                <ReportsPage />
               }
             />
 
