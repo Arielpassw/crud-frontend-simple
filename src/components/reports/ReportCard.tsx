@@ -1,63 +1,84 @@
+import { FaEye, FaFilePdf, FaFileExcel } from "react-icons/fa";
+
 type Props = {
   title: string;
   description: string;
-  file: string;
+  pdf: string;
+  excel: string;
 };
 
 export default function ReportCard({
   title,
   description,
-  file,
+  pdf,
+  excel,
 }: Props) {
-
-  // EXCEL
-  const csvFile =
-    file.replace(".pdf", ".csv");
-
   return (
+    <div className="border border-gray-200 rounded-2xl p-6 shadow-sm bg-white hover:shadow-lg transition-all duration-300">
 
-    <div className="border rounded-xl p-6 shadow bg-gray-50">
-
-      <h2 className="text-2xl font-bold mb-2">
+      {/* TITULO */}
+      <h2 className="text-xl font-bold text-gray-800 mb-2">
         {title}
       </h2>
 
-      <p className="mb-4 text-gray-600">
+      {/* DESCRIPCION */}
+      <p className="text-gray-500 text-sm mb-5">
         {description}
       </p>
 
-      <div className="flex gap-4 flex-wrap">
+      {/* BOTONES */}
+      <div className="flex gap-4">
 
         {/* VER PDF */}
         <a
-          href={file}
+          href={pdf}
           target="_blank"
           rel="noreferrer"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          title="Ver PDF"
+          className="
+            w-11 h-11 flex items-center justify-center
+            rounded-full bg-blue-600 text-white
+            hover:bg-blue-700 hover:scale-110
+            transition-all duration-200
+            shadow-md
+          "
         >
-          Ver PDF
+          <FaEye />
         </a>
 
         {/* DESCARGAR PDF */}
         <a
-          href={file}
+          href={pdf}
           download
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+          title="Descargar PDF"
+          className="
+            w-11 h-11 flex items-center justify-center
+            rounded-full bg-red-600 text-white
+            hover:bg-red-700 hover:scale-110
+            transition-all duration-200
+            shadow-md
+          "
         >
-          Descargar PDF
+          <FaFilePdf />
         </a>
 
         {/* DESCARGAR EXCEL */}
         <a
-          href={csvFile}
+          href={excel}
           download
-          className="bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700"
+          title="Descargar Excel"
+          className="
+            w-11 h-11 flex items-center justify-center
+            rounded-full bg-green-600 text-white
+            hover:bg-green-700 hover:scale-110
+            transition-all duration-200
+            shadow-md
+          "
         >
-          Descargar Excel
+          <FaFileExcel />
         </a>
 
       </div>
-
     </div>
   );
 }

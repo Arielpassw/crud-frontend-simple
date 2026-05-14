@@ -5,8 +5,12 @@ export const reportsData = [
     title: "Reporte Productos",
     description:
       "Listado general de productos",
-    file:
-      "/reports/productos.pdf",
+
+    pdf:
+      "http://localhost:3000/reports/products/pdf",
+
+    excel:
+      "http://localhost:3000/reports/products/xlsx",
   },
 
   {
@@ -14,8 +18,12 @@ export const reportsData = [
     title: "Reporte Tiendas",
     description:
       "Listado de tiendas registradas",
-    file:
-      "/reports/stores.pdf",
+
+    pdf:
+      "http://localhost:3000/reports/stores/pdf",
+
+    excel:
+      "http://localhost:3000/reports/stores/xlsx",
   },
 
   {
@@ -23,8 +31,12 @@ export const reportsData = [
     title: "Reporte Inventario",
     description:
       "Listado de inventario",
-    file:
-      "/reports/inventory.pdf",
+
+    pdf:
+      "http://localhost:3000/reports/inventory/pdf",
+
+    excel:
+      "http://localhost:3000/reports/inventory/xlsx",
   },
 
 ];

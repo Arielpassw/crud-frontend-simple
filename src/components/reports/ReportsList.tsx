@@ -15,10 +15,9 @@ export default function ReportsList() {
         <ReportCard
           key={report.id}
           title={report.title}
-          description={
-            report.description
-          }
-          file={report.file}
+          description={report.description}
+          pdf={report.pdf}
+          excel={report.excel}
         />
 
       ))}
