@@ -51,7 +51,7 @@ export default function ReportCard({
 
       </div>
 
-      {/* 🔥 MODAL PREVIEW */}
+      {/*  MODAL PREVIEW */}
       {openPreview && (
 
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
